@@ -94,7 +94,7 @@ let s:delimiterMap = {
     \ 'blade': { 'left': '{{--', 'right': '--}}' },
     \ 'bst': { 'left': '%' },
     \ 'btm': { 'left': '::' },
-    \ 'c': { 'left': '/*', 'right': '*/', 'leftAlt': '//' },
+    \ 'c': { 'left': '/* ', 'right': ' */', 'leftAlt': '// ' },
     \ 'cabal': { 'left': '--' },
     \ 'calibre': { 'left': '//' },
     \ 'caos': { 'left': '*' },
@@ -113,7 +113,7 @@ let s:delimiterMap = {
     \ 'conkyrc': { 'left': '#' },
     \ 'context': { 'left': '%', 'leftAlt': '--' },
     \ 'coq': { 'left': '(*', 'right': '*)' },
-    \ 'cpp': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
+    \ 'cpp': { 'left': '// ', 'leftAlt': '/* ', 'rightAlt': ' */' },
     \ 'crontab': { 'left': '#' },
     \ 'cs': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
     \ 'csp': { 'left': '--' },
@@ -224,9 +224,9 @@ let s:delimiterMap = {
     \ 'jade': { 'left': '//-', 'leftAlt': '//' },
     \ 'java': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
     \ 'javacc': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
-    \ 'javascript': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
-    \ 'javascriptreact': { 'left': '//', 'leftAlt': '{/*', 'rightAlt': '*/}' },
-    \ 'javascript.jquery': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
+    \ 'javascript': { 'left': '// ', 'leftAlt': '/* ', 'rightAlt': ' */' },
+    \ 'javascriptreact': { 'left': '// ', 'leftAlt': '{/* ', 'rightAlt': ' */}' },
+    \ 'javascript.jquery': { 'left': '// ', 'leftAlt': '/* ', 'rightAlt': ' */' },
     \ 'jess': { 'left': ';' },
     \ 'jgraph': { 'left': '(*', 'right': '*)' },
     \ 'jinja': { 'left': '{#', 'right': '#}', 'leftAlt': '<!--', 'rightAlt': '-->' },
@@ -342,7 +342,7 @@ let s:delimiterMap = {
     \ 'pug': { 'left': '//-', 'leftAlt': '//' },
     \ 'puppet': { 'left': '#' },
     \ 'pyrex': { 'left': '# ', 'leftAlt': '#' },
-    \ 'python': { 'left': '# ', 'leftAlt': '#' },
+    \ 'python': { 'left': '# ', 'leftAlt': '# ' },
     \ 'r': { 'left': '#', 'leftAlt': '#''' },
     \ 'racket': { 'left': ';', 'nested': 1, 'leftAlt': '#|', 'rightAlt': '|#', 'nestedAlt': 1 },
     \ 'radiance': { 'left': '#' },
@@ -443,8 +443,8 @@ let s:delimiterMap = {
     \ 'tup': { 'left': '#' },
     \ 'twig': { 'left': '{#', 'right': '#}' },
     \ 'txt2tags': { 'left': '%' },
-    \ 'typescript': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
-    \ 'typescriptreact': { 'left': '//', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+    \ 'typescript': { 'left': '// ', 'leftAlt': '/* ', 'rightAlt': ' */' },
+    \ 'typescriptreact': { 'left': '// ', 'leftAlt': '{/* ', 'rightAlt': ' */}' },
     \ 'uc': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' },
     \ 'uil': { 'left': '!' },
     \ 'upstart': { 'left': '#' },
@@ -1350,7 +1350,7 @@ endfunction
 " Function: NERDCommentIsCharCommented(line, col) abort
 " Check if the character at [line, col] is inside a comment
 " Note the Comment delimeter it self is considered as part of the comment
-" 
+"
 " Args:
 "   -line       the line number of the character
 "   -col        the column number of the character
@@ -1358,7 +1358,7 @@ endfunction
 function! NERDCommentIsCharCommented(line, col) abort
   " Function: s:searchfor(str, line, col, direction, [maxline])
   " search str in the buffer, including the character at [line, col]
-  " Args: 
+  " Args:
   "   -str:       the string for search
   "   -line:      the line number where search begins
   "   -col:       the column number where search begins
@@ -1426,14 +1426,14 @@ function! NERDCommentIsCharCommented(line, col) abort
       let leftpos = s:searchfor(a:left, a:line, a:col, 1)
       if leftpos == [0, 0]
         if !blockcommented | let blockcommented = 0 | endif
-      else 
+      else
         " call s:searchfor(a:right, a:line, a:col, 0)
         let rightpos = s:searchfor(a:right, leftpos[0], leftpos[1] + strlen(a:right) + 1, 0)
         if rightpos != [0, 0]
           if rightpos[0] < a:line
             if !blockcommented | let blockcommented = 0 | endif
           elseif rightpos[0] == a:line
-            if !blockcommented 
+            if !blockcommented
               let blockcommented = (rightpos[1] + strlen(a:right) > a:col) ? 1 : 0
             endif
           else " rightpos > a:line
@@ -1447,14 +1447,14 @@ function! NERDCommentIsCharCommented(line, col) abort
     return linecommented || blockcommented
   endfunction
   return s:checkwith(
-          \ b:NERDCommenterDelims['left'], 
-          \ b:NERDCommenterDelims['right'], 
-          \ a:line, 
-          \ a:col) || 
+          \ b:NERDCommenterDelims['left'],
+          \ b:NERDCommenterDelims['right'],
+          \ a:line,
+          \ a:col) ||
         \ s:checkwith(
-          \ b:NERDCommenterDelims['leftAlt'], 
-          \ b:NERDCommenterDelims['rightAlt'], 
-          \ a:line, 
+          \ b:NERDCommenterDelims['leftAlt'],
+          \ b:NERDCommenterDelims['rightAlt'],
+          \ a:line,
           \ a:col)
 endfunction
 
